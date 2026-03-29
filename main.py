@@ -1,12 +1,11 @@
 from fastapi import FastAPI, UploadFile, File, HTTPException, Form
 from fastapi.responses import Response
-import pypandoc_binary   # Bundles Pandoc — no external install needed
 import pypandoc
 import os
 
 app = FastAPI(
     title="MD → DOCX Converter",
-    description="Upload .md file → download .docx (running on Render)",
+    description="Upload .md file → download .docx (on Render)",
 )
 
 @app.post("/convert")
@@ -46,6 +45,5 @@ async def health():
     return {
         "status": "ok",
         "pandoc_version": pypandoc.get_pandoc_version(),
-        "port": os.getenv("PORT", "10000"),
-        "note": "using pypandoc-binary"
+        "port": "10000"
     }
