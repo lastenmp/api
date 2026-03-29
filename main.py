@@ -1,17 +1,18 @@
 from fastapi import FastAPI, UploadFile, File, HTTPException, Form
 from fastapi.responses import Response
+import pypandoc_binary   # This makes Pandoc available automatically
 import pypandoc
 
 app = FastAPI(
     title="MD → DOCX Converter",
-    description="Upload .md file → download .docx (running on Render)",
+    description="Upload .md file → download .docx (on Render with pypandoc-binary)",
 )
 
 @app.post("/convert")
 async def convert_md_file_to_docx(
     md_file: UploadFile = File(...),
     output_filename: str = Form("output.docx"),
-    extra_args: str = Form("", description="Optional Pandoc flags, space separated e.g. --table-of-contents")
+    extra_args: str = Form("", description="Optional Pandoc flags, space separated")
 ):
     if not md_file.filename.lower().endswith((".md", ".markdown")):
         raise HTTPException(status_code=400, detail="Only .md or .markdown files allowed")
@@ -41,4 +42,8 @@ async def convert_md_file_to_docx(
 
 @app.get("/health")
 async def health():
-    return {"status": "ok", "pandoc_version": pypandoc.get_pandoc_version()}
+    return {
+        "status": "ok",
+        "pandoc_version": pypandoc.get_pandoc_version(),
+        "note": "using pypandoc-binary (bundled)"
+    }
